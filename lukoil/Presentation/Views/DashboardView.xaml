@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="Lukoil.Client.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Grid Opacity="0">
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                         From="0"
+                                         To="1"
+                                         Duration="0:0:0.25" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="Главная" Style="{StaticResource HeaderTextStyle}" />
+            <TextBlock Text="Быстрые действия для загрузки ключевых данных"
+                       Margin="0,4,0,0"
+                       Foreground="#FF4C6A53" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="340" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="#40FFFFFF" CornerRadius="12" Padding="16" Margin="0,0,16,0">
+                <StackPanel>
+                    <TextBlock Text="Навигация" Style="{StaticResource HeaderTextStyle}" FontSize="20" />
+                    <TextBlock Text="Откройте нужный раздел слева: Товары, Поставки, Продажи, Статистика и другие." Margin="0,10,0,0" TextWrapping="Wrap" />
+                    <TextBlock Text="Быстрые действия вынесены в правый блок." Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#FF4C6A53" />
+                    <TextBlock Text="Текущая сводка сервера:" Margin="0,18,0,8" FontWeight="SemiBold" />
+                    <Border BorderBrush="#FF6FB276" BorderThickness="1" Background="#FFFFFFFF" CornerRadius="8" Padding="8">
+                        <DataGrid ItemsSource="{Binding StatsItems}"
+                                  AutoGenerateColumns="True"
+                                  IsReadOnly="True"
+                                  CanUserSortColumns="True"
+                                  MinHeight="180"
+                                  MaxHeight="250"
+                                  Style="{StaticResource ModernDataGridStyle}" />
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Background="#55FFFFFF" CornerRadius="12" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="Быстрые действия" Style="{StaticResource HeaderTextStyle}" FontSize="20" Margin="0,0,0,12" />
+                    <Button Content="Получить сводку (GET_STATS)" Command="{Binding StatsCommand}" Margin="0,0,0,8" />
+                    <ItemsControl ItemsSource="{Binding QuickCommands}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Title}" Command="{Binding ExecuteCommand}" Margin="0,0,0,8" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,109 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Color x:Key="AppBackground">#FFF5FBF5</Color>
+    <Color x:Key="PanelBackground">#FFFFFFFF</Color>
+    <Color x:Key="PanelBackgroundAlt">#FFEFF7EF</Color>
+    <Color x:Key="AppForeground">#FF1F3324</Color>
+
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBackground}" />
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="{StaticResource PanelBackground}" />
+    <SolidColorBrush x:Key="PanelBackgroundAltBrush" Color="{StaticResource PanelBackgroundAlt}" />
+    <SolidColorBrush x:Key="AppForegroundBrush" Color="{StaticResource AppForeground}" />
+
+    <Style TargetType="Window">
+        <Setter Property="Background" Value="{StaticResource AppBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource AppForegroundBrush}" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="HeaderPanelStyle" TargetType="Border">
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Margin" Value="12,12,12,0" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
+    </Style>
+
+    <Style x:Key="SidePanelStyle" TargetType="Border">
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Margin" Value="12" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}" />
+    </Style>
+
+    <Style x:Key="ContentPanelStyle" TargetType="Border">
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Margin" Value="0,12,12,12" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Background" Value="{StaticResource PanelBackgroundAltBrush}" />
+    </Style>
+
+    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="CaptionTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="#FF4C6A53" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="ModernDataGridStyle" TargetType="DataGrid">
+        <Setter Property="Background" Value="#FFFFFFFF" />
+        <Setter Property="RowBackground" Value="#FFFFFFFF" />
+        <Setter Property="AlternatingRowBackground" Value="#FFFFFFFF" />
+        <Setter Property="Foreground" Value="#FF111111" />
+        <Setter Property="HeadersVisibility" Value="All" />
+        <Setter Property="GridLinesVisibility" Value="All" />
+        <Setter Property="HorizontalGridLinesBrush" Value="#FF63AA6A" />
+        <Setter Property="VerticalGridLinesBrush" Value="#FF63AA6A" />
+        <Setter Property="BorderBrush" Value="#FF4B9B55" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="RowHeaderWidth" Value="0" />
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Background" Value="#FFFFFFFF" />
+                    <Setter Property="Foreground" Value="#FF111111" />
+                    <Setter Property="BorderBrush" Value="#FF63AA6A" />
+                    <Setter Property="BorderThickness" Value="0.5" />
+                    <Setter Property="Padding" Value="6,3" />
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#FFE4F4E6" />
+                    <Setter Property="Foreground" Value="#FF123716" />
+                    <Setter Property="BorderBrush" Value="#FF4B9B55" />
+                    <Setter Property="BorderThickness" Value="0.5" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="Padding" Value="6,4" />
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Opacity" Value="0" />
+                    <Style.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     From="0"
+                                                     To="1"
+                                                     Duration="0:0:0.22" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

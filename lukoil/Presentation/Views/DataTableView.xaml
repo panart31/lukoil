@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="Lukoil.Client.Views.DataTableView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:Lukoil.Client.Converters"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:NotEmptyStringToVisibilityConverter x:Key="NotEmptyStringToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid Opacity="0">
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                         From="0"
+                                         To="1"
+                                         Duration="0:0:0.25" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Title}" Style="{StaticResource HeaderTextStyle}" />
+            <Button Grid.Column="1" Content="На главную" Command="{Binding GoHomeCommand}" />
+        </Grid>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12,0,10">
+            <StackPanel>
+                <TextBox Width="260"
+                         materialDesign:HintAssist.Hint="Поиск по таблице"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                <TextBlock Text="Поиск выполняется по всем столбцам сразу, без учёта регистра."
+                           Margin="2,4,0,0"
+                           Style="{StaticResource CaptionTextStyle}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10,0,0,0"
+                        Visibility="{Binding SupportsIdFilter, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock Text="ID" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <TextBox Width="80" Text="{Binding IdFilter, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,8,0" />
+                <TextBlock Text="Фильтр по точному ID (локально)"
+                           VerticalAlignment="Center"
+                           Style="{StaticResource CaptionTextStyle}" />
+            </StackPanel>
+
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <DataGrid ItemsSource="{Binding Items}"
+                      AutoGenerateColumns="True"
+                      IsReadOnly="True"
+                      CanUserSortColumns="True"
+                      ClipboardCopyMode="IncludeHeader"
+                      SelectionUnit="CellOrRowHeader"
+                      SelectionMode="Extended"
+                      Style="{StaticResource ModernDataGridStyle}" />
+
+            <Border Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Background="#50000000">
+                <ProgressBar IsIndeterminate="True" Width="200" Height="8" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            </Border>
+
+            <Border Background="#331f1f1f" Padding="20"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource NotEmptyStringToVisibilityConverter}}">
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="#FFEF5350" />
+            </Border>
+        </Grid>
+
+        <TextBlock Grid.Row="3" Margin="0,10,0,0" Text="{Binding RecordCount, StringFormat='Записей: {0}'}" />
+    </Grid>
+</UserControl>

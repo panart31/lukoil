@@ -1,0 +1,94 @@
+﻿<Window x:Class="Lukoil.Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:converters="clr-namespace:Lukoil.Client.Converters"
+        xmlns:viewModels="clr-namespace:Lukoil.Client.ViewModels"
+        xmlns:views="clr-namespace:Lukoil.Client.Views"
+        mc:Ignorable="d"
+        Title="Клиент нефтебазы LUKOIL" Height="900" Width="1320"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <converters:ConnectionStateToBrushConverter x:Key="ConnectionStateToBrushConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <DataTemplate DataType="{x:Type viewModels:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:DataScreenViewModel}">
+            <views:DataTableView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:ComboQueryViewModel}">
+            <views:ComboQueryView />
+        </DataTemplate>
+
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding RefreshCurrentCommand}" />
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource HeaderPanelStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Хост" Style="{StaticResource CaptionTextStyle}" Margin="0,0,8,0" />
+                    <TextBox Width="190" Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,12,0" />
+
+                    <TextBlock Text="Порт" Style="{StaticResource CaptionTextStyle}" Margin="0,0,8,0" />
+                    <TextBox Width="90" Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,12,0" />
+
+                    <Button Content="Подключиться" Command="{Binding ConnectCommand}" Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,8,0" />
+                    <TextBlock Text="LUKOIL — энергия, которая движет будущее." Style="{StaticResource CaptionTextStyle}" FontWeight="SemiBold" Margin="10,0,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="12" Height="12" Fill="{Binding IsConnected, Converter={StaticResource ConnectionStateToBrushConverter}}" Margin="0,0,8,0" />
+                    <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Style="{StaticResource SidePanelStyle}">
+                <ListBox ItemsSource="{Binding NavigationItems}"
+                         SelectedItem="{Binding SelectedNavigation}"
+                         DisplayMemberPath="Title"
+                         BorderThickness="0"
+                         Background="Transparent" />
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource ContentPanelStyle}">
+                <Grid>
+                    <ContentControl Content="{Binding CurrentScreen}" />
+                    <Border Background="#60000000"
+                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ProgressBar IsIndeterminate="True" Width="220" Height="8" />
+                            <TextBlock Text="Выполняется запрос..." Margin="0,12,0,0" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
