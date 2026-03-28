@@ -75,25 +75,27 @@ public partial class MainWindowViewModel : ViewModelBase
     private void BuildNavigation()
     {
         var products = new DataScreenViewModel("Товары", "GET_ALL_PRODUCTS", ExecuteCommandAsync, NavigateHomeAsync);
-        var suppliers = new DataScreenViewModel("Поставщики", "GET_SUPPLIERS", ExecuteCommandAsync, NavigateHomeAsync);
-        var clients = new DataScreenViewModel("Клиенты", "GET_CLIENTS", ExecuteCommandAsync, NavigateHomeAsync);
         var inventory = new DataScreenViewModel("Склад", "GET_INVENTORY", ExecuteCommandAsync, NavigateHomeAsync);
-        var deliveries = new DataScreenViewModel("Поставки", "GET_DELIVERIES", ExecuteCommandAsync, NavigateHomeAsync, true);
-        var sales = new DataScreenViewModel("Продажи", "GET_SALES", ExecuteCommandAsync, NavigateHomeAsync, true);
+        var invoices = new DataScreenViewModel("Счета‑фактуры", "GET_INVOICES", ExecuteCommandAsync, NavigateHomeAsync, supportsIdFilter: true);
+        var shipments = new DataScreenViewModel("Отгрузки", "GET_SHIPMENTS", ExecuteCommandAsync, NavigateHomeAsync, supportsIdFilter: true, supportsDateRange: true);
+        var clientDebt = new DataScreenViewModel("Задолженности клиентов", "GET_CLIENT_DEBT", ExecuteCommandAsync, NavigateHomeAsync, supportsIdFilter: true);
         var stats = new DataScreenViewModel("Статистика", "GET_STATS", ExecuteCommandAsync, NavigateHomeAsync);
-        var debtors = new DataScreenViewModel("Должники", "GET_DEBTORS", ExecuteCommandAsync, NavigateHomeAsync);
+        var revenueByProduct = new DataScreenViewModel("Выручка по продуктам", "GET_REVENUE_BY_PRODUCT", ExecuteCommandAsync, NavigateHomeAsync, supportsDateRange: true);
+        var clientArDays = new DataScreenViewModel("Просрочка по клиенту (дни)", "GET_CLIENT_AR_DAYS", ExecuteCommandAsync, NavigateHomeAsync, supportsIdFilter: true);
+        var turnoverReport = new DataScreenViewModel("Обороты склада", "GET_TURNOVER_REPORT", ExecuteCommandAsync, NavigateHomeAsync, supportsDateRange: true);
 
-        _dataScreens.AddRange([products, suppliers, clients, inventory, deliveries, sales, stats, debtors]);
+        _dataScreens.AddRange([products, inventory, invoices, shipments, clientDebt, stats, revenueByProduct, clientArDays, turnoverReport]);
 
         NavigationItems.Add(new NavigationItem { Title = "Главная", ViewModel = Dashboard });
         NavigationItems.Add(new NavigationItem { Title = "Товары", ViewModel = products });
-        NavigationItems.Add(new NavigationItem { Title = "Поставщики", ViewModel = suppliers });
-        NavigationItems.Add(new NavigationItem { Title = "Клиенты", ViewModel = clients });
         NavigationItems.Add(new NavigationItem { Title = "Склад", ViewModel = inventory });
-        NavigationItems.Add(new NavigationItem { Title = "Поставки", ViewModel = deliveries });
-        NavigationItems.Add(new NavigationItem { Title = "Продажи", ViewModel = sales });
+        NavigationItems.Add(new NavigationItem { Title = "Счета‑фактуры", ViewModel = invoices });
+        NavigationItems.Add(new NavigationItem { Title = "Отгрузки", ViewModel = shipments });
+        NavigationItems.Add(new NavigationItem { Title = "Задолженности", ViewModel = clientDebt });
         NavigationItems.Add(new NavigationItem { Title = "Статистика", ViewModel = stats });
-        NavigationItems.Add(new NavigationItem { Title = "Должники", ViewModel = debtors });
+        NavigationItems.Add(new NavigationItem { Title = "Выручка по продуктам", ViewModel = revenueByProduct });
+        NavigationItems.Add(new NavigationItem { Title = "Просрочка по клиенту", ViewModel = clientArDays });
+        NavigationItems.Add(new NavigationItem { Title = "Обороты склада", ViewModel = turnoverReport });
         NavigationItems.Add(new NavigationItem { Title = "Комбо-запрос", ViewModel = ComboQuery });
 
         SelectedNavigation = NavigationItems.First();

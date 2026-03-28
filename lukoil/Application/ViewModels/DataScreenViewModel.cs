@@ -23,7 +23,16 @@ public partial class DataScreenViewModel : ViewModelBase
     private bool _supportsIdFilter;
 
     [ObservableProperty]
+    private bool _supportsDateRange;
+
+    [ObservableProperty]
     private string _idFilter = "0";
+
+    [ObservableProperty]
+    private string _dateFrom = string.Empty;
+
+    [ObservableProperty]
+    private string _dateTo = string.Empty;
 
     [ObservableProperty]
     private bool _isLoading;
@@ -46,13 +55,14 @@ public partial class DataScreenViewModel : ViewModelBase
     public IAsyncRelayCommand RefreshCommand { get; }
     public IAsyncRelayCommand GoHomeCommand { get; }
 
-    public DataScreenViewModel(string title, string command, Func<string, Task<QueryResult>> execute, Func<Task> goHome, bool supportsIdFilter = false)
+    public DataScreenViewModel(string title, string command, Func<string, Task<QueryResult>> execute, Func<Task> goHome, bool supportsIdFilter = false, bool supportsDateRange = false)
     {
         _title = title;
         _command = command;
         _execute = execute;
         _goHome = goHome;
         _supportsIdFilter = supportsIdFilter;
+        _supportsDateRange = supportsDateRange;
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         GoHomeCommand = new AsyncRelayCommand(async () => await _goHome());
     }
@@ -78,6 +88,24 @@ public partial class DataScreenViewModel : ViewModelBase
         ApplyFilter();
     }
 
+    partial void OnDateFromChanged(string value)
+    {
+        if (!SupportsDateRange)
+        {
+            return;
+        }
+        _ = DebouncedRefreshByIdAsync();
+    }
+
+    partial void OnDateToChanged(string value)
+    {
+        if (!SupportsDateRange)
+        {
+            return;
+        }
+        _ = DebouncedRefreshByIdAsync();
+    }
+
     public async Task RefreshAsync()
     {
         var requestVersion = Interlocked.Increment(ref _refreshVersion);
@@ -86,9 +114,34 @@ public partial class DataScreenViewModel : ViewModelBase
 
         try
         {
-            // For ID-based screens we always request full data from server and filter locally.
-            // This avoids inconsistent server-side filtering behavior.
-            var fullCommand = SupportsIdFilter ? $"{Command}|0" : Command;
+            string fullCommand = Command;
+
+            if (SupportsDateRange && IsValidDate(DateFrom) && IsValidDate(DateTo))
+            {
+                fullCommand = $"{Command}|{DateFrom}|{DateTo}";
+            }
+            else if (SupportsIdFilter)
+            {
+                var id = NormalizeId(IdFilter);
+                if (string.Equals(Command, "GET_CLIENT_DEBT", StringComparison.OrdinalIgnoreCase))
+                {
+                    fullCommand = id > 0 ? $"{Command}|{id}" : $"{Command}|ALL";
+                }
+                else if (string.Equals(Command, "GET_INVOICES", StringComparison.OrdinalIgnoreCase))
+                {
+                    fullCommand = id > 0 ? $"{Command}|{id}" : $"{Command}|ALL";
+                }
+                else if (string.Equals(Command, "GET_SHIPMENTS", StringComparison.OrdinalIgnoreCase))
+                {
+                    fullCommand = id > 0 ? $"{Command}|{id}" : $"{Command}|ALL";
+                }
+                else
+                {
+                    // Fallback: request all and filter locally
+                    fullCommand = $"{Command}|0";
+                }
+            }
+
             var result = await _execute(fullCommand);
 
             if (!result.IsSuccess)
@@ -246,6 +299,17 @@ public partial class DataScreenViewModel : ViewModelBase
     private static int NormalizeId(string idValue)
     {
         return int.TryParse(idValue, out var id) && id >= 0 ? id : 0;
+    }
+
+    private static bool IsValidDate(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value) || value.Length != 10) return false;
+        // very naive YYYY-MM-DD
+        return char.IsDigit(value[0]) && char.IsDigit(value[1]) && char.IsDigit(value[2]) && char.IsDigit(value[3]) &&
+               value[4] == '-' &&
+               char.IsDigit(value[5]) && char.IsDigit(value[6]) &&
+               value[7] == '-' &&
+               char.IsDigit(value[8]) && char.IsDigit(value[9]);
     }
 
     private async Task DebouncedRefreshByIdAsync()

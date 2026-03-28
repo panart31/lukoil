@@ -54,9 +54,21 @@
                         Visibility="{Binding SupportsIdFilter, Converter={StaticResource BoolToVisibilityConverter}}">
                 <TextBlock Text="ID" VerticalAlignment="Center" Margin="0,0,8,0" />
                 <TextBox Width="80" Text="{Binding IdFilter, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,8,0" />
-                <TextBlock Text="Фильтр по точному ID (локально)"
+                <TextBlock Text="Фильтр по точному ID"
                            VerticalAlignment="Center"
                            Style="{StaticResource CaptionTextStyle}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10,0,0,0"
+                        Visibility="{Binding SupportsDateRange, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock Text="Период" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <TextBox Width="110" Text="{Binding DateFrom, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         materialDesign:HintAssist.Hint="YYYY-MM-DD" Margin="0,0,8,0" />
+                <TextBlock Text="—" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <TextBox Width="110" Text="{Binding DateTo, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         materialDesign:HintAssist.Hint="YYYY-MM-DD" />
             </StackPanel>
 
         </StackPanel>

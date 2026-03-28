@@ -31,8 +31,11 @@ public partial class DashboardViewModel : ViewModelBase
         {
             ("Товары", "GET_ALL_PRODUCTS"),
             ("Склад", "GET_INVENTORY"),
-            ("Поставщики", "GET_SUPPLIERS"),
-            ("Продажи", "GET_SALES|0")
+            ("Счета‑фактуры", "GET_INVOICES|ALL"),
+            ("Отгрузки", "GET_SHIPMENTS|ALL"),
+            ("Задолженности", "GET_CLIENT_DEBT|ALL"),
+            ("Выручка по продуктам", "GET_REVENUE_BY_PRODUCT|2026-01-01|2026-12-31"),
+            ("Обороты склада", "GET_TURNOVER_REPORT|2026-01-01|2026-12-31")
         };
 
         foreach (var (title, commandText) in commands)
