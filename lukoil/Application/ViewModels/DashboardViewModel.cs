@@ -19,13 +19,13 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private DataView? _statsItems;
 
-    public IAsyncRelayCommand StatsCommand { get; }
+    public IAsyncRelayCommand? StatsCommand { get; }
 
     public DashboardViewModel(Func<string, Task<QueryResult>> executeCommand, Func<string, Task> openScreenByCommand)
     {
         _executeCommand = executeCommand;
         _openScreenByCommand = openScreenByCommand;
-        StatsCommand = new AsyncRelayCommand(RefreshStatsAsync);
+        // По требованию статистику выключили: кнопку и автообновление не используем
 
         var commands = new[]
         {

@@ -79,12 +79,9 @@ public partial class MainWindowViewModel : ViewModelBase
         var invoices = new DataScreenViewModel("Счета‑фактуры", "GET_INVOICES", ExecuteCommandAsync, NavigateHomeAsync, supportsIdFilter: true);
         var shipments = new DataScreenViewModel("Отгрузки", "GET_SHIPMENTS", ExecuteCommandAsync, NavigateHomeAsync, supportsIdFilter: true, supportsDateRange: true);
         var clientDebt = new DataScreenViewModel("Задолженности клиентов", "GET_CLIENT_DEBT", ExecuteCommandAsync, NavigateHomeAsync, supportsIdFilter: true);
-        var stats = new DataScreenViewModel("Статистика", "GET_STATS", ExecuteCommandAsync, NavigateHomeAsync);
-        var revenueByProduct = new DataScreenViewModel("Выручка по продуктам", "GET_REVENUE_BY_PRODUCT", ExecuteCommandAsync, NavigateHomeAsync, supportsDateRange: true);
-        var clientArDays = new DataScreenViewModel("Просрочка по клиенту (дни)", "GET_CLIENT_AR_DAYS", ExecuteCommandAsync, NavigateHomeAsync, supportsIdFilter: true);
-        var turnoverReport = new DataScreenViewModel("Обороты склада", "GET_TURNOVER_REPORT", ExecuteCommandAsync, NavigateHomeAsync, supportsDateRange: true);
+        // Удалены по требованию: статистика/выручка/просрочка/обороты/комбо
 
-        _dataScreens.AddRange([products, inventory, invoices, shipments, clientDebt, stats, revenueByProduct, clientArDays, turnoverReport]);
+        _dataScreens.AddRange([products, inventory, invoices, shipments, clientDebt]);
 
         NavigationItems.Add(new NavigationItem { Title = "Главная", ViewModel = Dashboard });
         NavigationItems.Add(new NavigationItem { Title = "Товары", ViewModel = products });
@@ -92,11 +89,7 @@ public partial class MainWindowViewModel : ViewModelBase
         NavigationItems.Add(new NavigationItem { Title = "Счета‑фактуры", ViewModel = invoices });
         NavigationItems.Add(new NavigationItem { Title = "Отгрузки", ViewModel = shipments });
         NavigationItems.Add(new NavigationItem { Title = "Задолженности", ViewModel = clientDebt });
-        NavigationItems.Add(new NavigationItem { Title = "Статистика", ViewModel = stats });
-        NavigationItems.Add(new NavigationItem { Title = "Выручка по продуктам", ViewModel = revenueByProduct });
-        NavigationItems.Add(new NavigationItem { Title = "Просрочка по клиенту", ViewModel = clientArDays });
-        NavigationItems.Add(new NavigationItem { Title = "Обороты склада", ViewModel = turnoverReport });
-        NavigationItems.Add(new NavigationItem { Title = "Комбо-запрос", ViewModel = ComboQuery });
+        // Удалены по требованию вкладки: Статистика/Выручка/Просрочка/Обороты/Комбо
 
         SelectedNavigation = NavigationItems.First();
     }
@@ -124,7 +117,6 @@ public partial class MainWindowViewModel : ViewModelBase
             _log.Info(StatusText);
             await SaveSettingsAsync();
             await RefreshAllDataScreensAsync();
-            await Dashboard.RefreshStatsAsync();
         }
         catch (Exception ex)
         {
@@ -149,21 +141,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private async Task RefreshCurrentAsync()
     {
-        if (CurrentScreen is DashboardViewModel)
-        {
-            await Dashboard.RefreshStatsAsync();
-            return;
-        }
-
         if (CurrentScreen is DataScreenViewModel tableScreen)
         {
             await tableScreen.RefreshAsync();
             return;
-        }
-
-        if (CurrentScreen is ComboQueryViewModel comboScreen)
-        {
-            await comboScreen.RunComboAsync();
         }
     }
 
@@ -174,21 +155,10 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        if (CurrentScreen is DashboardViewModel)
-        {
-            await Dashboard.RefreshStatsAsync();
-            return;
-        }
-
         if (CurrentScreen is DataScreenViewModel tableScreen)
         {
             await tableScreen.RefreshAsync();
             return;
-        }
-
-        if (CurrentScreen is ComboQueryViewModel comboScreen)
-        {
-            await comboScreen.RunComboAsync();
         }
     }
 
@@ -249,6 +219,17 @@ public partial class MainWindowViewModel : ViewModelBase
             IsBusy = true;
             _log.Info($"> {command}");
             var raw = await _tcpClient.SendCommandAsync(command, DefaultTimeoutMs);
+            var rawTrim = raw.Trim();
+
+            // Явное детектирование ошибок сервера/БД в текстовом формате
+            if (rawTrim.StartsWith("ERROR|", StringComparison.OrdinalIgnoreCase) ||
+                rawTrim.StartsWith("FATAL", StringComparison.OrdinalIgnoreCase) ||
+                rawTrim.Contains("\nERROR|", StringComparison.OrdinalIgnoreCase))
+            {
+                _log.Error("Ответ сервера с ошибкой", null);
+                return QueryResult.Fail(rawTrim);
+            }
+
             var parsed = _parser.ParseTable(raw);
             _log.Info($"Получен ответ ({raw.Length} символов)");
             return QueryResult.Success(raw, parsed);

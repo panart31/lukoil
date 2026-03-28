@@ -38,25 +38,14 @@
             <Border Grid.Column="0" Background="#40FFFFFF" CornerRadius="12" Padding="16" Margin="0,0,16,0">
                 <StackPanel>
                     <TextBlock Text="Навигация" Style="{StaticResource HeaderTextStyle}" FontSize="20" />
-                    <TextBlock Text="Откройте нужный раздел слева: Товары, Поставки, Продажи, Статистика и другие." Margin="0,10,0,0" TextWrapping="Wrap" />
+                    <TextBlock Text="Откройте нужный раздел слева: Товары, Склад, Счета‑фактуры, Отгрузки, Задолженности." Margin="0,10,0,0" TextWrapping="Wrap" />
                     <TextBlock Text="Быстрые действия вынесены в правый блок." Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#FF4C6A53" />
-                    <TextBlock Text="Текущая сводка сервера:" Margin="0,18,0,8" FontWeight="SemiBold" />
-                    <Border BorderBrush="#FF6FB276" BorderThickness="1" Background="#FFFFFFFF" CornerRadius="8" Padding="8">
-                        <DataGrid ItemsSource="{Binding StatsItems}"
-                                  AutoGenerateColumns="True"
-                                  IsReadOnly="True"
-                                  CanUserSortColumns="True"
-                                  MinHeight="180"
-                                  MaxHeight="250"
-                                  Style="{StaticResource ModernDataGridStyle}" />
-                    </Border>
                 </StackPanel>
             </Border>
 
             <Border Grid.Column="1" Background="#55FFFFFF" CornerRadius="12" Padding="16">
                 <StackPanel>
                     <TextBlock Text="Быстрые действия" Style="{StaticResource HeaderTextStyle}" FontSize="20" Margin="0,0,0,12" />
-                    <Button Content="Получить сводку (GET_STATS)" Command="{Binding StatsCommand}" Margin="0,0,0,8" />
                     <ItemsControl ItemsSource="{Binding QuickCommands}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>

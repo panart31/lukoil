@@ -71,6 +71,10 @@
                          materialDesign:HintAssist.Hint="YYYY-MM-DD" />
             </StackPanel>
 
+            <Button Content="Обновить таблицу"
+                    Command="{Binding RefreshCommand}"
+                    Margin="10,0,0,0" />
+
         </StackPanel>
 
         <Grid Grid.Row="2">
